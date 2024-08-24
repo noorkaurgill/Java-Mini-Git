@@ -1,0 +1,12 @@
+> init
+<<<
++ f.txt wug.txt
++ k.txt notwug.txt
+> add f.txt
+<<<
+> add k.txt
+<<<
+> commit "add these"
+<<<
+E f.txt
+E k.txt

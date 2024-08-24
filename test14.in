@@ -1,0 +1,16 @@
+> init
+<<<
++ f.txt wug.txt
+> add f.txt
+<<<
+> commit "added f and g"
+<<<
++ f.txt notwug.txt
+> checkout -- f.txt
+<<<
+= f.txt wug.txt
++ g.txt wug.txt
+> add g.txt
+<<<
+> commit "add g"
+<<<

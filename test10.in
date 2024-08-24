@@ -1,0 +1,8 @@
+> init
+<<<
++ f.txt wug.txt
+> add f.txt
+<<<
+> commit "the files"
+<<<
+E f.txt

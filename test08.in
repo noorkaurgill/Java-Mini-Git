@@ -1,0 +1,13 @@
+> init
+<<<
++ f.txt notwug.txt
++ g.txt wug.txt
+> add g.txt
+<<<
+> add f.txt
+<<<
+> rm g.txt
+<<<
+> commit "remove the g file"
+<<<
+

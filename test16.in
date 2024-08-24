@@ -1,0 +1,9 @@
+> init
+<<<
++ f.txt wug.txt
+> add f.txt
+<<<
++ g.txt notwug.txt
+> rm g.txt
+No reason to remove the file.
+<<<

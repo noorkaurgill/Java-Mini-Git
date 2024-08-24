@@ -1,0 +1,19 @@
+> init
+<<<
+D DATE "Date: \w\w\w \w\w\w \d+ \d\d:\d\d:\d\d \d\d\d\d [-+]\d\d\d\d"
+D COMMIT_HEAD "commit ([a-f0-9]+)[ \t]*\n(?:Merge:\s+[0-9a-f]{7}\s+[0-9a-f]{7}[ ]*\n)?${DATE}"
++ wug.txt wug.txt
+> add wug.txt
+<<<
+> commit "version 1"
+<<<
+> log
+===
+${COMMIT_HEAD}
+version 1
+
+===
+${COMMIT_HEAD}
+initial commit
+
+<<<*

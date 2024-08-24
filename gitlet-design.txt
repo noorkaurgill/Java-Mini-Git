@@ -1,0 +1,206 @@
+Gitlet Design Document
+----------------------
+
+Classes and Data Structures
+---------------------------
+
+**** Branch ****
+
+This class contains pointers that reference related sequences of commits, or branches of the tree data structure.
+
+** Fields **
+
+private String branch: The name of the branch.
+Commit recentCommit:  The head of the branch.
+Stage staging: A snapshot of the staging area.
+private boolean conflict = false: A boolean checker for merge conflicts.
+
+**** Stage ****
+
+This class contains a screenshot of the staging area with the latest commit, files that must be removed, staged files that are cleared after each commit, and all the files that are staged.
+
+** Fields **
+
+private Commit currentCommit: A pointer to the most recent commit.
+private ArrayList<String> staged: An arraylist of files that are staged to be committed.
+private ArrayList<String> stagedToClear: An arraylist of files that are newly staged and to be cleared after a commit.
+private ArrayList<String> forRemoval: An arraylist if files that should not be tracked in the next commit.
+
+**** Commit ****
+
+This class represents a commit with its defining features.
+
+** Fields **
+
+private Map<String, String> fileMapped: Maps a file name to its unique SHA1 identification, which is the same as its parent but updated if the file has been altered.
+private Map<String, String> filesUpdatedToStage: Maps the name of a file added to the SHA1 identification of its commit.
+private String commitDir: The home directory that the commit is located in.
+private Commit parentCommit: The parent commit, where the current commit is the “child” commit.
+private String message: The message associated with the commit.
+private Date time: The timestamp  associated with the commit.
+private String SHA: The unique SHA1 id associated with the commit.
+private boolean hasMerged = false: A boolean checker for whether or not the current commit is a merge.
+private String mergeParents: The SHA1 ids associated with the merging parents.
+
+
+**** Tree ****
+
+Represents the tree data structure used to run the system and perform all necessary commands.
+
+** Fields **
+
+private Branch currentBranch: A pointer to the current branch.
+private Map<String, Commit> commits: Maps a SHA1 id to its commit.
+private HashMap<String, String> subSHA: A shorter, refined version of the SHA1 id.
+private Map<String, Branch> branchMapping: Maps a name to the associated branch.
+private Map<String, ArrayList<String>> convert: Maps commit messages to SHA1 ids associated with the commits.
+private boolean changeTrack: A boolean checker for changes between commits.
+
+
+**** Main ****
+
+Driver class that allows for the functionality of the version-control system based on given command arguments.
+
+** Fields **
+
+private static String argument2: The first portion of the command provided.
+private static String argument3: The second portion of the command provided.
+
+
+Algorithms
+----------
+
+**** Branch Class ****
+
+1. Branch(): The class constructor. Saves the state of the branch and populates the name string to contain the name of the branch and a pointer to a head commit, as well as a pointer to the staging area associated with the latest commit. This is done for each of the branches.
+
+2.  stageAFile(String file): Adds a file to the staging area.
+
+3.  removeAFile(String file): Removes a file from the staging area.
+
+4.  setRecentCommit(Commit commit): Sets the latest commit.
+
+5. setTheStage(Stage stage): Sets the staging area.
+
+6. commit(String message, String parent1, String parent2): Commits a merge commit with a message and two parent commits as the latest commit.
+
+7.  merge(Branch branchy): Merges the current branch with another branch. Uses the split point of A and B. Merges a file into the current head if it is unchanged in the current head since the split point and has been changed in the given head.
+
+8. checkForConflict(Commit currentHead, Commit givenHead, String add): Changes the files in the working directory based on conflicts in the current and given heads.
+
+9. length(): Returns the length of the current branch.
+
+**** Stage Class ****
+
+1. getCurrentCommit(): Returns the latest commit.
+
+2. getStaged(): Returns an arraylist of the staged files.
+
+3.  getStagedToClear(): Returns an arraylist of files that are staged and cleared after each commit.
+
+4.  getForRemoval(): Returns an arraylist of files that should be removed and not be staged in the following commit.
+
+5. Stage(Commit latestCommit): The class constructor. Creates a stage based on the information provided by the most recent commit.
+
+6. add(String file): Adds a file to the staging area if it exists and has changed. However, if the file was marked for removal, the marker is deleted.
+
+7. remove(String file): Removes a file from the staging area.
+
+8. toString(): Overrides the toString() method for syntax purposes; displays the log properly in the terminal when Gitlet is run.
+
+**** Commit Class ****
+
+1. getFileMapped(): Returns mapped files.
+
+2. getFileUpdatedToStage(): Returns a map of file names to their corresponding directories.
+
+3. getCommitDir(): Returns the commit directory.
+
+4. getParentCommit(): Returns the parent commit associated with the current commit.
+
+5. getMessage(): Returns the message associated with the current commit.
+
+6. getTime(): Returns the timestamp associated with the current commit.
+
+7. getSHA(): Return the unique SHA1 identification associated with the current commit.
+
+8. getFile(String file): Returns the name of the inputted file.
+
+9. getDash(): Returns the “/” symbol used to separate path objects.
+
+10. Commit(Stage snap): Based on the information provided by the stage, creates a commit with all necessary information.
+
+11. getTimeStamp(): Returns the timestamp information for each commit.
+
+12. contains(String file): Checks whether or not the commit contains a particular file.
+
+13. Commit(Stage snap, String msg): The class constructor. Creates a commit object based on the stage data and the message provided.
+
+14. unchangedCommit(): Checks whether or not the current commit is the same as its parent commit, whether or not any changes have been made.
+
+15. Commit(Stage snap, String message, String parent1, String parent2): When the commit is merge, the stage data is committed with the provided message and information from the two parental commits.
+
+16. checkout(String file): Checks out a file; deserialization process.
+
+17. checkout(): Checks out the current commit.
+
+18. altered(Commit head, String fileName): Checks whether or not there have been any changes to the file between the current commit and the head commit.
+
+19. toString(): Overrides the toString() method for syntax purposes; displays the log properly in the terminal when Gitlet is run.
+
+
+**** Tree Class ****
+
+1. getCurrentBranch(): Returns the current branch.
+
+2. Tree(): The class constructor. Constructs the tree data structure to perform all necessary git commands.
+
+3. init(): Returns a new version-control system within the current directory with a commit, master branch, and timestamp, which is representative of the Unix Epoch, 00:00:00 UTC, Thursday, 1 January 1970, as described in the spec. By default, there is one commit with no files and an initial commit message. Only the master branch is present as a pointer reference and current branch. Aborts If there is already a Gitlet version-control system in the current directory. An error message is printed in the case of overriding or replacing a pre-existing version-control system.
+
+4. add(String file): Inserts a copy of the file as it already exists into the staging area. If we are trying to stage a pre-staged file, it is overwritten with the new contents. If the current working version of the file is the same as the current commit, it is not staged to be added and it is removed from the staging area if present. If the file does not exist, an error message is printed.
+
+5. commit(String message): Saves a picture of the files in the current commit and staging area and develops a new commit with a corresponding message. The commit tracks saved files and it is the same as the parent commit by default. Staged and removed files serve as commit updates. The head pointer points to this. Any changes made to files after staging or removal are ignored by the commit. Each commit is identified by its SHA-1 id, parent reference, log message, and commit time.
+
+6. checkout1(String branch): Checks out a branch if it exists, it is not the current branch, and the files within it have been tracked.
+
+7. changeHelper(): Checks whether or not there are any untracked files in the directory and if there are any untracked changes.
+
+8. checkout2(String branch): Checks out a branch if it exists, it is not the current branch, and the files within it have been tracked.
+
+9. checkout3(String id, String file): Checks out a file from a commit with a specific SHA1 id if the file and commit exist.
+
+10. log():  Prints information for each commit starting from current commit up to the initial commit. The first parent's commits are followed and second parents in merge situations are not accounted for in the display. This is the commit history and displays the commit id, timestamp, and message.
+
+11. globalLog(): Same as log but information is included for all commits.
+
+12. remove(String file): Removes a file from the staging area if it has been staged. Files are marked to not be included in the following commits if they are tracked in the current commit. The file is also removed from the current working directory if it is tracked in the current commit.  If the file is not staged or tracked by the head commit, an error message is printed.
+
+13. find(String message): Prints the SHA1 id of every commit with the given message. Line breaks are implemented.
+
+14. status(): Prints the branches that exist at the moment, where the current branch is marked with a “*” symbol. The files that are marked to track and the files that are staged are marked as well.
+
+15. removeBranch(String branch): Removes the pointer to a branch.
+
+16. reset(String id): Checks out all files tracked with a specific commit id. Removes tracked files that are not in the current commit. The current branch head is moved to the current commit node.
+
+17. merge(String branch): Merges a branch with the current branch.
+
+18. toString(): Overrides the toString() method for syntax purposes; displays the log properly in the terminal when Gitlet is run.
+
+**** Main Class ****
+
+1.  init(): Returns the initial version-control system if there isn't one in the current directory.
+
+2.  main(String... args): Usage: java gitlet.Main ARGS, where ARGS contains <COMMAND> <OPERAND> ... Performs the corresponding and adequate method with the argument.
+
+3.  checkout(Tree repo, String...args): Checks out the arguments in the repository.
+
+Persistence
+-----------
+
+The commit command adds a copy of the file as it currently exists to the staging area so adding a file is also called staging the file. But if the current working version of the file is identical to the version in the current commit:
+
+1. We do not stage it to be added, and remove it from the staging area if it is already there, such as when a file is changed, added, and then changed back. We can serialize them into bytes that we can eventually write to a specially named file on disk. This can be done with writeObject method from the Utils class.
+
+2. If the file had been marked to be removed, we can delete that mark. In order to retrieve our state, before executing any code, we need to search for the saved files in the working
+directory and load the saved objects. We can use the readObject method from the Utils class to read data of files and deserialize the objects we previously wrote to these files.
